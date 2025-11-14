@@ -1,7 +1,6 @@
 // const nodemailer = require("nodemailer")
 // require('dotenv').config()
 
-
 // const sendEmail = async (req, res) => {
 
 //     try {
@@ -60,11 +59,9 @@
 
 // module.exports = { sendEmail };
 
-
 // const nodemailer = require("nodemailer");
 //  require('dotenv').config()
 
- 
 // async function sendEmail(to, subject, message) {
 
 //   try {
@@ -84,7 +81,7 @@
 //       },
 
 //     });
- 
+
 //     const info = await transporter.sendMail({
 
 //       from: `"Refund Team" <${process.env.SMTP_USER}>`,
@@ -96,7 +93,7 @@
 //       text: message,
 
 //     });
- 
+
 //     console.log("✅ Email sent:", info.messageId);
 
 //   } catch (error) {
@@ -106,10 +103,10 @@
 //   }
 
 // }
- 
+
 // module.exports = sendEmail;
 
-const sendEmail = require("../utils/sendEmail");
+const sendEmail = require("../utils/projectInquiryEmail");
 
 const sendFormEmail = async (req, res) => {
   try {
@@ -122,7 +119,6 @@ const sendFormEmail = async (req, res) => {
       });
     }
 
-    
     const message = `
 New Project Inquiry
 --------------------
@@ -137,11 +133,10 @@ ${description}
 Sent from your project form.
 `;
 
-    
     await sendEmail(
       process.env.SMTP_RECEIVER || process.env.SMTP_USER,
-      `New Inquiry from ${name}`,                        
-      message                                            
+      `New Inquiry from ${name}`,
+      message
     );
 
     res.status(200).json({
@@ -158,6 +153,3 @@ Sent from your project form.
 };
 
 module.exports = { sendFormEmail };
-
-
- 
