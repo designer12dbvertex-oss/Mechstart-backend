@@ -19,9 +19,9 @@ app.use(cors({
 }));
   
 
-// app.use("/api/form", formRoute);
-app.use("/api", contactFormRoute);
-// app.use("/api/form", growthFormRoute);
+app.use("/api/form", formRoute);
+app.use("/api/form", contactFormRoute);
+app.use("/api/form", growthFormRoute);
 
 app.use((err, req, res, next) => {
   console.error(" Server error:", err);
