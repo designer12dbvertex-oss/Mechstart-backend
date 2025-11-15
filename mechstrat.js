@@ -9,7 +9,7 @@ dotenv.config();
 app.use(express.json());
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ["https://mechstreat.graphicsvolume.com"]
+  ? ["https://api.mechstreat.graphicsvolume.com"]
   : ["http://localhost:5000", "http://localhost:3001"];
 
 app.use(cors({
@@ -17,13 +17,11 @@ app.use(cors({
   methods: ["GET", "POST"],
   credentials: true
 }));
-  app.get("/", (req, res) => {
-  res.send("✅ I am backend! Server is running successfully.");
-});
+  
 
-app.use("/api/form", formRoute);
-app.use("/api/form", contactFormRoute);
-app.use("/api/form", growthFormRoute);
+// app.use("/api/form", formRoute);
+app.use("/api", contactFormRoute);
+// app.use("/api/form", growthFormRoute);
 
 app.use((err, req, res, next) => {
   console.error(" Server error:", err);
@@ -32,7 +30,8 @@ app.use((err, req, res, next) => {
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
+  console.log("pid", process.pid),
   console.log(
-    `🚀 Server running in ${process.env.NODE_ENV || "dev"} on port ${PORT}`
+    `🚀 Server running in ${process.env.NODE_ENV, process.pid  || "dev"} on port ${PORT}`
   )
 );
