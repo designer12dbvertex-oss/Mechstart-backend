@@ -11,7 +11,7 @@ const growthFormEmail = async (req, res) => {
       });
     }
 
-    const messages = `
+    const emailConten = `
 New Project Inquiry
 --------------------
 Name: ${name}
@@ -27,7 +27,7 @@ Sent from your project form.
     await sendEmail(
       process.env.SMTP_RECEIVER || process.env.SMTP_USER,
       `New Inquiry from ${name}`,
-      message
+      emailConten
     );
 
     res.status(200).json({
