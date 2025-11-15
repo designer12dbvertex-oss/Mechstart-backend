@@ -21,9 +21,9 @@ app.use(cors({
   res.send("✅ I am backend! Server is running successfully.");
 });
 
-app.use("/api/inquiry-form", formRoute);
-app.use("/api/contact-form", contactFormRoute);
-app.use("/api/growth-form", growthFormRoute);
+app.use("/api/form", formRoute);
+app.use("/api/form", contactFormRoute);
+app.use("/api/form", growthFormRoute);
 
 app.use((err, req, res, next) => {
   console.error(" Server error:", err);

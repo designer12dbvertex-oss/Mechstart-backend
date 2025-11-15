@@ -5,6 +5,6 @@ const { growthValidateForm } = require("../utils/growthValidation.js");
 
 const router = express.Router();
 
-router.post("/send-email", growthValidateForm, growthFormEmail);
+router.post("/growth-email", growthValidateForm, growthFormEmail);
 
 module.exports = router;
