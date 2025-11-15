@@ -9,8 +9,8 @@ dotenv.config();
 app.use(express.json());
 
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ["https://mechstrat.graphicsvolume.com"]
-  : ["http://localhost:3000", "http://localhost:3001"];
+  ? ["https://mechstreat.graphicsvolume.com"]
+  : ["http://localhost:5000", "http://localhost:3001"];
 
 app.use(cors({
   origin: allowedOrigins,
