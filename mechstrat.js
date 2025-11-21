@@ -19,14 +19,13 @@ app.use(express.json());
 // ---------------------------------------------
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://api.mechstreat.graphicsvolume.com"]
+    ? ["https://mechstreat.graphicsvolume.com"]
     : ["http://localhost:3000", "http://localhost:5010"];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Postman, server-to-server
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin) return callback(null, true);       if (allowedOrigins.includes(origin)) return callback(null, true);
 
       console.log("❌ CORS Blocked:", origin);
       return callback(new Error("Not allowed by CORS"));
