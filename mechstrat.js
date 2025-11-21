@@ -19,7 +19,7 @@ app.use(express.json());
 // ---------------------------------------------
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://mechstreat.graphicsvolume.com"]
+    ? ["https://mechstreat.graphicsvolume.com", "https://www.mechstreat.graphicsvolume.com"]
     : ["http://localhost:3000", "http://localhost:5010"];
 
 app.use(
