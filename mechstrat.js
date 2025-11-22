@@ -18,24 +18,32 @@ app.use(express.json());
 // ---------------------------------------------
 // CORS CONFIG (BEST & ERROR-FREE)
 // ---------------------------------------------
+
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://mechstreat.graphicsvolume.com", "https://www.mechstreat.graphicsvolume.com", "https://api.mechstreat.graphicsvolume.com"]
+    ? [
+        "https://mechstreat.graphicsvolume.com",
+        "https://www.mechstreat.graphicsvolume.com",
+        "https://api.mechstreat.graphicsvolume.com"
+      ]
     : ["http://localhost:3000", "http://localhost:5010"];
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);       if (allowedOrigins.includes(origin)) return callback(null, true);
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+     
+//       if (!origin) return callback(null, true);
+//       if (allowedOrigins.includes(origin)) return callback(null, true);
 
-      console.log("❌ CORS Blocked:", origin);
-      return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+//       console.log("❌ CORS Blocked:", origin);
+//       return callback(new Error("Not allowed by CORS"));
+//     },
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     credentials: true,
+//   })
+// );
 
+app.use( cors({origin: "*"}));
 // ---------------------------------------------
 // Routes
 // ---------------------------------------------
