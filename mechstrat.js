@@ -6,6 +6,7 @@ const formRoute = require("./routes/inquiryRoute.js");
 const contactFormRoute = require("./routes/contactRoute.js");
 const growthFormRoute = require("./routes/growthRoute.js");
 
+
 const app = express();
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use(express.json());
 // ---------------------------------------------
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://mechstreat.graphicsvolume.com", "https://www.mechstreat.graphicsvolume.com"]
+    ? ["https://mechstreat.graphicsvolume.com", "https://www.mechstreat.graphicsvolume.com", "https://api.mechstreat.graphicsvolume.com"]
     : ["http://localhost:3000", "http://localhost:5010"];
 
 app.use(
