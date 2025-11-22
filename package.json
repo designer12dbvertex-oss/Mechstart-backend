@@ -2,7 +2,7 @@
   "name": "my-website-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "mechstrat.js",
   "scripts": {
     "start": "node mechstrat.js",
     "server": "nodemon mechstrat.js"
