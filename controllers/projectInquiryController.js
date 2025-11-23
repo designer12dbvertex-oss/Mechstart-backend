@@ -106,9 +106,60 @@
 
 // module.exports = sendEmail;
 
-const sendEmail = require("../utils/projectInquiryEmail");
+// const sendEmail = require("../utils/projectInquiryEmail");
 
-const sendFormEmail = async (req, res) => {
+// const sendFormEmail = async (req, res) => {
+//   try {
+//     const { name, company, datetime, timezone, description } = req.body;
+
+//     if (!name || !description) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Name and description are required.",
+//       });
+//     }
+
+//     const message = `
+// New Project Inquiry
+// --------------------
+// Name: ${name}
+// Company: ${company || "N/A"}
+// Date & Time: ${datetime || "N/A"}
+// Timezone: ${timezone || "N/A"}
+
+// Description:
+// ${description}
+// --------------------
+// Sent from your project form.
+// `;
+
+//     await sendEmail(
+//       process.env.SMTP_RECEIVER || process.env.SMTP_USER,
+//       `New Inquiry from ${name}`,
+//       message
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Submit form successfully!",
+//     });
+//   } catch (error) {
+//     console.error("❌ Error in sendFormEmail:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to send email",
+//     });
+//   }
+// };
+
+// module.exports = { sendFormEmail };
+
+
+
+
+import sendEmail from "../utils/projectInquiryEmail.js";
+
+export const sendFormEmail = async (req, res) => {
   try {
     const { name, company, datetime, timezone, description } = req.body;
 
@@ -151,5 +202,3 @@ Sent from your project form.
     });
   }
 };
-
-module.exports = { sendFormEmail };
