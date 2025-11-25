@@ -5,8 +5,8 @@ const userRouter=Router();
 
 userRouter.get("/home", getHomeDetail)
 
-userRouter.get("/consulting-detail", getConsultingDetails);
-userRouter.get("/consulting", getConsulting)
+userRouter.get("/vision-detail", getConsultingDetails);
+userRouter.get("/vision", getConsulting)
 userRouter.get("/leadership", leadership)
 
 userRouter.get("/technology", getTechnologyDetails)

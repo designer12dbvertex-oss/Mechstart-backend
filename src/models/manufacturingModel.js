@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const manufacturingSchema = new mongoose.Schema(
     {
-         banner: {
+        banner: {
             type: String,
             required: true,
         },
@@ -23,6 +23,30 @@ const manufacturingSchema = new mongoose.Schema(
             required: true,
         },
         strategyDescription1: {
+            type: String,
+            required: true,
+        },
+        strategyImage2: {
+            type: String,
+            required: true,
+        },
+        strategyTitle2: {
+            type: String,
+            required: true,
+        },
+        strategyDescription2: {
+            type: String,
+            required: true,
+        },
+        strategyImage3: {
+            type: String,
+            required: true,
+        },
+        strategyTitle3: {
+            type: String,
+            required: true,
+        },
+        strategyDescription3: {
             type: String,
             required: true,
         },
