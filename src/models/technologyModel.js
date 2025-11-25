@@ -7,7 +7,17 @@ const technologySchema = new mongoose.Schema(
             required: true,
         },
         challengeDescription: {
-            type: [String],
+            type: String,
+            required: false,
+            trim: true,
+        },
+         aboutChallenge: {
+            type: String,
+            required: false,
+            trim: true,
+        },
+         challengeTitle: {
+            type: String,
             required: false,
             trim: true,
         },

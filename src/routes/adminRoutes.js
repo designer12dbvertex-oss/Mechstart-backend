@@ -37,13 +37,13 @@ adminRouter.post("/leadership", authentication, authorization(['admin']), upload
     { name: 'functionImage', maxCount: 1 },
 ]), upsertLeadership);
 
-adminRouter.get("/consulting", authentication, authorization(['admin']), getConsulting)
-adminRouter.post("/consulting", authentication, authorization(['admin']), upsertConsulting)
+adminRouter.get("/vision", authentication, authorization(['admin']), getConsulting)
+adminRouter.post("/vision", authentication, authorization(['admin']), upsertConsulting)
 
-adminRouter.post("/consulting-detail", authentication, authorization(['admin']), upload.single("image"), addConsultingDetail);
-adminRouter.patch("/consulting-detail", authentication, authorization(['admin']), upload.single("image"), updateConsultingDetail);
-adminRouter.delete("/consulting-detail/:id", authentication, authorization(['admin']), deleteConsultingDetail);
-adminRouter.get("/consulting-detail", authentication, authorization(['admin']), getConsultingDetails);
+adminRouter.post("/vision-detail", authentication, authorization(['admin']), upload.single("image"), addConsultingDetail);
+adminRouter.patch("/vision-detail", authentication, authorization(['admin']), upload.single("image"), updateConsultingDetail);
+adminRouter.delete("/vision-detail/:id", authentication, authorization(['admin']), deleteConsultingDetail);
+adminRouter.get("/vision-detail", authentication, authorization(['admin']), getConsultingDetails);
 
 
 /*===========================technology page =============================== */
@@ -85,6 +85,8 @@ adminRouter.post("/manufacturing", authentication, authorization(["admin"]),
         { name: "banner", maxCount: 1 },
         { name: "image", maxCount: 1 },
         { name: "strategyImage1", maxCount: 1 },
+         { name: "strategyImage2", maxCount: 1 },
+          { name: "strategyImage3", maxCount: 1 },
         { name: "strategicImage", maxCount: 1 },
         { name: "businessImage1", maxCount: 1 },
         { name: "businessImage2", maxCount: 1 },

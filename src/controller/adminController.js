@@ -304,6 +304,8 @@ export const upsertTechnology = async (req, res, next) => {
 
         const {
             challengeDescription,
+            aboutChallenge,
+            challengeTitle,
             marketDescription,
             marketStrategy,
             partnershipDescription,
@@ -348,6 +350,9 @@ export const upsertTechnology = async (req, res, next) => {
             }
 
             tech.challengeDescription = challengeDescription;
+            tech.aboutChallenge = aboutChallenge;
+            tech.challengeTitle = challengeTitle;
+
             tech.marketDescription = marketDescription;
             tech.marketStrategy = JSON.parse(marketStrategy || "[]");
             tech.partnershipDescription = partnershipDescription;
@@ -374,6 +379,8 @@ export const upsertTechnology = async (req, res, next) => {
                 businessGrowthImage2: `public/uploads/${files?.businessGrowthImage2?.[0]?.filename}`,
                 businessGrowthImage3: `public/uploads/${files?.businessGrowthImage3?.[0]?.filename}`,
                 challengeDescription,
+                aboutChallenge,
+                challengeTitle,
                 marketDescription,
                 marketStrategy: JSON.parse(marketStrategy || "[]"),
                 partnershipDescription,
@@ -651,6 +658,12 @@ export const upsertManufacturing = async (req, res, next) => {
             strategyImage1: handleImageUpdate("strategyImage1"),
             strategyTitle1: body.strategyTitle1,
             strategyDescription1: body.strategyDescription1,
+                strategyImage2: handleImageUpdate("strategyImage2"),
+            strategyTitle2: body.strategyTitle2,
+            strategyDescription2: body.strategyDescription2,
+                  strategyImage3: handleImageUpdate("strategyImage3"),
+            strategyTitle3: body.strategyTitle3,
+            strategyDescription3: body.strategyDescription3,
 
             strategicDescription: body.strategicDescription,
             strategicImage: handleImageUpdate("strategicImage"),
