@@ -116,6 +116,8 @@ export const validateForm = [
     .matches(/^[A-Za-z0-9\s&.,'-]+$/)
     .withMessage("Company name contains invalid characters"),
 
+
+
   body("description")
     .trim()
     .notEmpty()
@@ -127,6 +129,14 @@ export const validateForm = [
     .optional()
     .isISO8601()
     .withMessage("Invalid date format"),
+
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid email format")
+    .normalizeEmail(),
 
   body("timezone")
     .optional()

@@ -161,7 +161,7 @@ import sendEmail from "../utils/projectInquiryEmail.js";
 
 export const sendFormEmail = async (req, res) => {
   try {
-    const { name, company, datetime, timezone, description } = req.body;
+    const { name, company, datetime, timezone, description,email } = req.body;
 
     if (!name || !description) {
       return res.status(400).json({
@@ -187,6 +187,7 @@ export const sendFormEmail = async (req, res) => {
 New Project Inquiry
 --------------------
 Name: ${name}
+Email: ${email || "N/A"}
 Company: ${company || "N/A"}
 Date & Time: ${formattedDateTime}
 Timezone: ${timezone || "N/A"}
