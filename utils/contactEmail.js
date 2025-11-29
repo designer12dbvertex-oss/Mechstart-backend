@@ -87,7 +87,7 @@ async function contactEmail(to, subject, message) {
  
     // 3️⃣ Send the email
     const info = await transporter.sendMail({
-      from: `"Refund Team" <${process.env.SMTP_USER}>`, // MUST match auth.user
+      from: `"resetOTP" <${process.env.SMTP_USER}>`, // MUST match auth.user
       to,
       subject,
       text: message,

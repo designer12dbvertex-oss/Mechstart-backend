@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addConsultingDetail, createCapexDetail, createScalingStrategy, deleteCapexDetail, deleteConsultingDetail, deleteScalingStrategy, getContactList, Login, updateCapexDetail, updateConsultingDetail, updateScalingStrategy, upsertAI, upsertCapex, upsertConsulting, upsertContactBanner, upsertHome, upsertLeadership, upsertManufacturing, upsertScaling, upsertTechnology } from "../controller/adminController.js";
+import { addConsultingDetail, createCapexDetail, createScalingStrategy, deleteCapexDetail, deleteConsultingDetail, deleteScalingStrategy, getContactList, Login, updateCapexDetail, updateConsultingDetail,forgotPassword,resetPassword, updateScalingStrategy, upsertAI, upsertCapex, upsertConsulting, upsertContactBanner, upsertHome, upsertLeadership, upsertManufacturing, upsertScaling, upsertTechnology } from "../controller/adminController.js";
 import { authentication } from "../middleware/authentication.js";
 import { authorization } from "../middleware/authorization.js";
 import upload from "../middleware/upload.js";
@@ -101,6 +101,10 @@ adminRouter.post("/capex-detail", authentication, authorization(["admin"]), uplo
 adminRouter.get("/capex-detail", authentication, authorization(["admin"]), getCapexDetail);
 adminRouter.patch("/capex-detail", authentication, authorization(["admin"]), upload.single("image"), updateCapexDetail);
 adminRouter.delete("/capex-detail/:id", authentication, authorization(["admin"]), deleteCapexDetail);
+
+
+adminRouter.post("/forgot-password", forgotPassword);
+adminRouter.patch("/reset-password", resetPassword);
 
 
 
