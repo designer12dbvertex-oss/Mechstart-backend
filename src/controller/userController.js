@@ -20,14 +20,23 @@ export const leadership = async (req, res, next) => {
     }
 }
 
+// export const getBanner = async (req, res, next) => {
+//     try {
+//         const bannerData = await ContactBannerModel.findOne();
+//         return res.status(200).json({ success: true, data: bannerData, })
+//     } catch (error) {
+//         next(error)
+//     }
+// }
+
 export const getBanner = async (req, res, next) => {
     try {
         const bannerData = await ContactBannerModel.findOne();
-        return res.status(200).json({ success: true, data: bannerData, })
+        return res.status(200).json({ success: true, data: bannerData });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 
 export const getConsulting = async (req, res, next) => {

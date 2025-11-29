@@ -86,10 +86,53 @@ export const getContactList = async (req, res, next) => {
     }
 }
 
+// export const upsertContactBanner = async (req, res, next) => {
+//     try {
+//         const existing = await ContactBannerModel.findOne();
+//         if (existing) {
+//             if (req.file) {
+//                 const oldImagePath = path.join(process.cwd(), existing.banner);
+//                 if (fs.existsSync(oldImagePath)) {
+//                     fs.unlinkSync(oldImagePath);
+//                 }
+//                 existing.banner = "public/uploads/" + req.file.filename;
+//             }
+//             await existing.save();
+
+//             return res.status(200).json({
+//                 success: true,
+//                 message: "banner updated successfully",
+//                 data: existing,
+//             });
+//         }
+
+//         if (!req.file)
+//             return res.status(400).json({ success: false, message: "Image is required" });
+
+//         const newData = await ContactBannerModel.create({
+//             banner: "public/uploads/" + req.file.filename,
+//         });
+
+//         return res.status(201).json({
+//             success: true,
+//             message: "banner created successfully",
+//             data: newData,
+//         });
+//     } catch (error) {
+//         next(error)
+//     }
+// };
+
 export const upsertContactBanner = async (req, res, next) => {
     try {
         const existing = await ContactBannerModel.findOne();
+
         if (existing) {
+            // 👉 Add new fields without changing logic
+            existing.phone = req.body.phone || existing.phone;
+            existing.email = req.body.email || existing.email;
+            existing.fax = req.body.fax || existing.fax;
+
             if (req.file) {
                 const oldImagePath = path.join(process.cwd(), existing.banner);
                 if (fs.existsSync(oldImagePath)) {
@@ -97,6 +140,10 @@ export const upsertContactBanner = async (req, res, next) => {
                 }
                 existing.banner = "public/uploads/" + req.file.filename;
             }
+if (req.body.phone) existing.phone = req.body.phone;
+if (req.body.fax) existing.fax = req.body.fax;
+if (req.body.email) existing.email = req.body.email;
+
             await existing.save();
 
             return res.status(200).json({
@@ -106,11 +153,17 @@ export const upsertContactBanner = async (req, res, next) => {
             });
         }
 
+        // ❗ SAME LOGIC — only added fields, nothing changed
         if (!req.file)
             return res.status(400).json({ success: false, message: "Image is required" });
 
         const newData = await ContactBannerModel.create({
             banner: "public/uploads/" + req.file.filename,
+
+            // 👉 Added fields
+            phone: req.body.phone,
+            email: req.body.email,
+            fax: req.body.fax,
         });
 
         return res.status(201).json({
@@ -118,11 +171,11 @@ export const upsertContactBanner = async (req, res, next) => {
             message: "banner created successfully",
             data: newData,
         });
+
     } catch (error) {
-        next(error)
+        next(error);
     }
 };
-
 
 export const upsertLeadership = async (req, res) => {
     try {
