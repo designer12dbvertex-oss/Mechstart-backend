@@ -15,11 +15,11 @@ import CapexStrategyModel from "../models/capexStrategyModel.js";
 import CapexModel from "../models/capexModel.js";
 import HomeModel from "../models/homeModel.js";
 import bcrypt from 'bcrypt'
-import crypto, { hash }  from 'crypto'
+import crypto, { hash } from 'crypto'
 import jwt from 'jsonwebtoken'
 
 import Adminforward from "../models/AdminForward.js";
-import sendEmail  from "../../utils/sendEmail.js";
+import sendEmail from "../../utils/sendEmail.js";
 
 const checkPassword = async (password, hashPassword) => {
     const verifyPassword = await bcrypt.compare(password, hashPassword);
@@ -39,11 +39,13 @@ export const Login = async (req, res, next) => {
     try {
         const { email, password } = req?.body;
 
-        const isExistEmail = await AdminModel.findOne({ email: email });
+        const isExistEmail = await AdminModel.findOne({
+            email: { $regex: new RegExp(`^${email}$`, 'i') }
+        });
         if (!isExistEmail) return res.status(404).json({ success: false, message: 'email not valid' })
         console.log("email", email, "password", password);
-    const hash = await bcrypt.hash(password, 10);
-    console.log("hshh", hash)
+        const hash = await bcrypt.hash(password, 10);
+        console.log("hshh", hash)
         await checkPassword(password, isExistEmail?.password);
         const token = await generateToken(isExistEmail);
 
@@ -140,9 +142,9 @@ export const upsertContactBanner = async (req, res, next) => {
                 }
                 existing.banner = "public/uploads/" + req.file.filename;
             }
-if (req.body.phone) existing.phone = req.body.phone;
-if (req.body.fax) existing.fax = req.body.fax;
-if (req.body.email) existing.email = req.body.email;
+            if (req.body.phone) existing.phone = req.body.phone;
+            if (req.body.fax) existing.fax = req.body.fax;
+            if (req.body.email) existing.email = req.body.email;
 
             await existing.save();
 
@@ -718,10 +720,10 @@ export const upsertManufacturing = async (req, res, next) => {
             strategyImage1: handleImageUpdate("strategyImage1"),
             strategyTitle1: body.strategyTitle1,
             strategyDescription1: body.strategyDescription1,
-                strategyImage2: handleImageUpdate("strategyImage2"),
+            strategyImage2: handleImageUpdate("strategyImage2"),
             strategyTitle2: body.strategyTitle2,
             strategyDescription2: body.strategyDescription2,
-                  strategyImage3: handleImageUpdate("strategyImage3"),
+            strategyImage3: handleImageUpdate("strategyImage3"),
             strategyTitle3: body.strategyTitle3,
             strategyDescription3: body.strategyDescription3,
 
@@ -964,98 +966,98 @@ export const upsertHome = async (req, res, next) => {
 
 // <--- Ye zaroor import karein
 export const forgotPassword = async (req, res) => {
-  try {
-    // 1. Email ko clean karein
-    const emailInput = req.body.email ? req.body.email.trim() : "";
-    
-    // --- DEBUGGING START ---
-    console.log("---------------- DIAGNOSIS START ----------------");
     try {
-        console.log("Searching in Collection Name:", AdminModel.collection.name);
-        const allUsers = await AdminModel.find({}, 'email'); 
-        console.log("Total Users found in DB:", allUsers.length);
-        console.log("List of ALL Emails in DB:", allUsers.map(u => u.email));
-    } catch (dbError) {
-        console.log("Debugging Error (Ignore this):", dbError.message);
-    }
-    console.log("Searching for input:", emailInput);
-    console.log("---------------- DIAGNOSIS END ------------------");
-    // --- DEBUGGING END ---
+        // 1. Email ko clean karein
+        const emailInput = req.body.email ? req.body.email.trim() : "";
 
-    if (!emailInput) {
-        return res.status(400).json({ success: false, message: "Please provide an email address" });
-    }
+        // --- DEBUGGING START ---
+        console.log("---------------- DIAGNOSIS START ----------------");
+        try {
+            console.log("Searching in Collection Name:", AdminModel.collection.name);
+            const allUsers = await AdminModel.find({}, 'email');
+            console.log("Total Users found in DB:", allUsers.length);
+            console.log("List of ALL Emails in DB:", allUsers.map(u => u.email));
+        } catch (dbError) {
+            console.log("Debugging Error (Ignore this):", dbError.message);
+        }
+        console.log("Searching for input:", emailInput);
+        console.log("---------------- DIAGNOSIS END ------------------");
+        // --- DEBUGGING END ---
 
-    // 2. User dhundhe (Case insensitive)
-    const user = await AdminModel.findOne({ 
-        email: { $regex: `^${emailInput}$`, $options: 'i' } 
-    });
+        if (!emailInput) {
+            return res.status(400).json({ success: false, message: "Please provide an email address" });
+        }
 
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: `Email not found in database. (Checked in collection: ${AdminModel.collection.name})` 
-      });
-    }
+        // 2. User dhundhe (Case insensitive)
+        const user = await AdminModel.findOne({
+            email: { $regex: `^${emailInput}$`, $options: 'i' }
+        });
 
-    // 3. Token Manually Generate karein
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: `Email not found in database. (Checked in collection: ${AdminModel.collection.name})`
+            });
+        }
 
-    const resetToken = crypto.randomBytes(20).toString("hex");
+        // 3. Token Manually Generate karein
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Token ko Hash karke User object me set karein
-    user.resetPasswordToken = crypto
-        .createHash("sha256")
-        .update(resetToken)
-        .digest("hex");
+        const resetToken = crypto.randomBytes(20).toString("hex");
 
-    // Expiry time set karein (10 minutes)
-    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
-    user.otp=otp;
+        // Token ko Hash karke User object me set karein
+        user.resetPasswordToken = crypto
+            .createHash("sha256")
+            .update(resetToken)
+            .digest("hex");
 
-    // 4. Save karein (Validation skip karke)
-    await user.save({ validateBeforeSave: false });
+        // Expiry time set karein (10 minutes)
+        user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+        user.otp = otp;
 
-    // 5. Link banayein
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173"; 
-    // const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+        // 4. Save karein (Validation skip karke)
+        await user.save({ validateBeforeSave: false });
 
-    const message = `Enter Otp :\n\n${otp}\n\n Valid for 10 minutes.`;
+        // 5. Link banayein
+        const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+        // const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
-    try {
-      // 6. Email Bhejein
-      await sendEmail({
-        email: user.email,
-        subject: "Password Reset Request",
-        message: message,
-      });
+        const message = `Enter Otp :\n\n${otp}\n\n Valid for 10 minutes.`;
 
-      res.status(200).json({ 
-        success: true, 
-        message: `Reset link sent to ${user.email}` 
-      });
+        try {
+            // 6. Email Bhejein
+            await sendEmail({
+                email: user.email,
+                subject: "Password Reset Request",
+                message: message,
+            });
+
+            res.status(200).json({
+                success: true,
+                message: `Reset link sent to ${user.email}`
+            });
+
+        } catch (error) {
+            // Agar fail ho jaye to token hata dein
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+            await user.save({ validateBeforeSave: false });
+
+            return res.status(500).json({
+                success: false,
+                message: "Email sending failed",
+                error: error.message
+            });
+        }
 
     } catch (error) {
-      // Agar fail ho jaye to token hata dein
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save({ validateBeforeSave: false });
-
-      return res.status(500).json({ 
-        success: false, 
-        message: "Email sending failed",
-        error: error.message 
-      });
+        console.error("Forgot Password Error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
     }
-
-  } catch (error) {
-    console.error("Forgot Password Error:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal Server Error",
-      error: error.message 
-    });
-  }
 };
 
 // @desc    Reset Password - Set New Password
@@ -1066,53 +1068,53 @@ export const forgotPassword = async (req, res) => {
 
 
 export const resetPassword = async (req, res) => {
-  try {
-    const { email, otp, password } = req.body;
+    try {
+        const { email, otp, password } = req.body;
 
-    if (!email || !otp || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email, OTP and Password are required",
-      });
+        if (!email || !otp || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Email, OTP and Password are required",
+            });
+        }
+
+        const user = await AdminModel.findOne({
+            email,
+            otp: otp,
+            resetPasswordExpire: { $gt: Date.now() }, // Not expired
+        });
+
+        console.log("ggggggg", user)
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid or expired OTP",
+            });
+        }
+
+
+
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        console.log(hashedPassword, 'ggg')
+
+        user.password = hashedPassword;
+
+        console.log(user, 'hh')
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Password updated successfully",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
-
-    const user = await AdminModel.findOne({
-      email,
-      otp:otp,
-      resetPasswordExpire: { $gt: Date.now() }, // Not expired
-    });
-
-   console.log("ggggggg",user)
-
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired OTP",
-      });
-    }
-     
-
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    console.log(hashedPassword,'ggg')
-
-    user.password = hashedPassword;
-
-console.log(user,'hh')
-    user.resetPasswordExpire = undefined;
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Password updated successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
 };
 
