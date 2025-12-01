@@ -170,19 +170,21 @@ export const sendFormEmail = async (req, res) => {
       });
     }
 
-    let formattedDateTime = "N/A";
+    // let formattedDateTime = "N/A";
 
-    if (datetime) {
-      const dateObj = new Date(datetime);
+    // if (datetime) {
+    //   const dateObj = new Date(datetime);
 
-      const datePart = dateObj.toLocaleDateString("en-GB"); 
-      const timePart = dateObj.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+    //   const datePart = dateObj.toLocaleDateString("en-GB"); 
+    //   const timePart = dateObj.toLocaleTimeString("en-US", {
+    //     hour: "2-digit",
+    //     minute: "2-digit",
+    //   });
 
-      formattedDateTime = `${datePart}  ${timePart}`;
-    }
+    //   formattedDateTime = `${datePart}  ${timePart}`;
+    // }
+    console.log(datetime,"aaaa")
+    let formattedDateTime= datetime;
     const message = `
 New Project Inquiry
 --------------------

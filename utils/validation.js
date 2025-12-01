@@ -127,7 +127,7 @@ export const validateForm = [
 
   body("datetime")
     .optional()
-    .isISO8601()
+    .isString()
     .withMessage("Invalid date format"),
 
   body("email")
