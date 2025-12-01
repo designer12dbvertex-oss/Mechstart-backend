@@ -44,9 +44,11 @@ export const Login = async (req, res, next) => {
         });
         if (!isExistEmail) return res.status(404).json({ success: false, message: 'email not valid' })
         console.log("email", email, "password", password);
-        const hash = await bcrypt.hash(password, 10);
-        console.log("hshh", hash)
-        await checkPassword(password, isExistEmail?.password);
+        // const hash = await bcrypt.hash(password, 10);
+        // console.log("hshh", hash)
+        console.log(isExistEmail,'gg')
+        const isCorrecetPassword = await checkPassword(password, isExistEmail?.password);
+        if (!isCorrecetPassword) return res.status(404).json({ success: false, message: 'Email or Password Invalid' })
         const token = await generateToken(isExistEmail);
 
         const userData = {
