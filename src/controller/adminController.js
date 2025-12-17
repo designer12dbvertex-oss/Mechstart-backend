@@ -15,10 +15,15 @@ import CapexStrategyModel from '../models/capexStrategyModel.js';
 import CapexModel from '../models/capexModel.js';
 import HomeModel from '../models/homeModel.js';
 import bcrypt from 'bcrypt';
+import crypto, { hash } from 'crypto';
 import jwt from 'jsonwebtoken';
+
+import Adminforward from '../models/AdminForward.js';
+import sendEmail from '../../utils/sendEmail.js';
 
 const checkPassword = async (password, hashPassword) => {
   const verifyPassword = await bcrypt.compare(password, hashPassword);
+  console.log('verifyPas', verifyPassword);
   if (verifyPassword) return verifyPassword;
   throw new Error('Email and Password wrong');
 };
@@ -977,5 +982,156 @@ export const upsertHome = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+// <--- Ye zaroor import karein
+export const forgotPassword = async (req, res) => {
+  try {
+    // 1. Email ko clean karein
+    const emailInput = req.body.email ? req.body.email.trim() : '';
+
+    // --- DEBUGGING START ---
+    console.log('---------------- DIAGNOSIS START ----------------');
+    try {
+      console.log('Searching in Collection Name:', AdminModel.collection.name);
+      const allUsers = await AdminModel.find({}, 'email');
+      console.log('Total Users found in DB:', allUsers.length);
+      console.log(
+        'List of ALL Emails in DB:',
+        allUsers.map((u) => u.email)
+      );
+    } catch (dbError) {
+      console.log('Debugging Error (Ignore this):', dbError.message);
+    }
+    console.log('Searching for input:', emailInput);
+    console.log('---------------- DIAGNOSIS END ------------------');
+    // --- DEBUGGING END ---
+
+    if (!emailInput) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'Please provide an email address' });
+    }
+
+    // 2. User dhundhe (Case insensitive)
+    const user = await AdminModel.findOne({
+      email: { $regex: `^${emailInput}$`, $options: 'i' },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `Email not found in database. (Checked in collection: ${AdminModel.collection.name})`,
+      });
+    }
+
+    // 3. Token Manually Generate karein
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Token ko Hash karke User object me set karein
+    user.resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    // Expiry time set karein (10 minutes)
+    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+    user.otp = otp;
+
+    // 4. Save karein (Validation skip karke)
+    await user.save({ validateBeforeSave: false });
+
+    // 5. Link banayein
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    // const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
+
+    const message = `Enter Otp :\n\n${otp}\n\n Valid for 10 minutes.`;
+
+    try {
+      // 6. Email Bhejein
+      await sendEmail({
+        email: user.email,
+        subject: 'Password Reset Request',
+        message: message,
+      });
+
+      res.status(200).json({
+        success: true,
+        message: `Reset link sent to ${user.email}`,
+      });
+    } catch (error) {
+      // Agar fail ho jaye to token hata dein
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      return res.status(500).json({
+        success: false,
+        message: 'Email sending failed',
+        error: error.message,
+      });
+    }
+  } catch (error) {
+    console.error('Forgot Password Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Reset Password - Set New Password
+// @route   PUT /api/admin/reset-password/:resettoken
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, password } = req.body;
+
+    if (!email || !otp || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, OTP and Password are required',
+      });
+    }
+
+    const user = await AdminModel.findOne({
+      email,
+      otp: otp,
+      resetPasswordExpire: { $gt: Date.now() }, // Not expired
+    });
+
+    console.log('ggggggg', user);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired OTP',
+      });
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log(hashedPassword, 'ggg');
+
+    user.password = hashedPassword;
+
+    console.log(user, 'hh');
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
